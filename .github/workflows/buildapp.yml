@@ -1,0 +1,49 @@
+
+name: Build app
+
+on: 
+  release:
+    types: [published]
+      
+jobs:
+  
+
+build_on_win:
+    runs-on: windows-latest
+    steps:
+    # checkout branch
+    - uses: actions/checkout@v3
+
+    # install node
+    - uses: actions/setup-node@master
+      with:
+        node-version: 18.16
+
+    - name: Update dependencies
+      run: npm update
+    
+    - name: Install dependencies
+      run: npm install
+
+    - name: Build app
+      run: npm run make
+
+    - name: Compress release
+      run: Compress-Archive -Path ./out/materialserver-win32-x64/* -Destination materialserver-win32-x64.zip
+
+    - name: See directory
+      run: ls
+
+    # Create a release for this specific version
+    - name: Update Release with Files
+      id: create_version_release
+      uses: ncipollo/release-action@v1
+      with:
+        allowUpdates: true # Set this to false if you want to prevent updating existing releases
+        name: ${{ github.event.release.name }}
+        draft: ${{ github.event.release.unpublished }}
+        prerelease: ${{ github.event.release.prerelease }}
+        token: ${{ secrets.GITHUB_TOKEN }}
+        artifacts: './materialserver-win32-x64.zip'
+        tag: ${{ github.event.release.tag_name }}
+        body: ${{ github.event.release.body }}
