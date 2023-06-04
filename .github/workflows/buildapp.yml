@@ -63,8 +63,11 @@ jobs:
     - name: Install dependencies
       run: npm install
 
+    - name: Build app for universal
+      run: npm run make -- --arch=universal --platform=darwin
+
     - name: Build app for arm
-      run: npm run make -- --platform darwin-arm64
+      run: npm run make -- --arch=arm64 --platform=darwin 
 
     - name: Build app for intel
       run: npm run make -- --platform darwin
