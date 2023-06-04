@@ -45,3 +45,29 @@ jobs:
         artifacts: './materialserver-win32-x64.zip'
         tag: ${{ github.event.release.tag_name }}
         body: ${{ github.event.release.body }}
+
+  build_on_mac:
+    runs-on: macOS-latest
+    steps:
+    # checkout branch
+    - uses: actions/checkout@v3
+
+    # install node
+    - uses: actions/setup-node@master
+      with:
+        node-version: 18.16
+
+    - name: Update dependencies
+      run: npm update
+    
+    - name: Install dependencies
+      run: npm install
+
+    - name: Build app
+      run: npm run make
+
+    - name: See directory
+      run: ls
+
+    - name: See directory
+      run: ls ./out
