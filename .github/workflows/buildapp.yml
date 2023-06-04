@@ -6,8 +6,9 @@ on:
     types: [published]
       
 jobs:
-  build_on_win:
-    runs-on: windows-latest
+  
+  build_on_mac_x64:
+    runs-on: macOS-latest
     steps:
     # checkout branch
     - uses: actions/checkout@v3
@@ -23,11 +24,17 @@ jobs:
     - name: Install dependencies
       run: npm install
 
-    - name: Build app
-      run: npm run make
+    - name: Build app for intel
+      run: npm run make -- --platform darwin
+
+    - name: See directory
+      run: ls ./out
+
+    - name: See directory
+      run: ls ./out/materialserver-darwin-x64
 
     - name: Compress release
-      run: Compress-Archive -Path ./out/materialserver-win32-x64/* -Destination materialserver-win32-x64.zip
+      run: zip ./materialserver-macos-x64.zip out/materialserver-darwin-x64/materialserver.app
 
     - name: See directory
       run: ls
@@ -42,11 +49,11 @@ jobs:
         draft: ${{ github.event.release.unpublished }}
         prerelease: ${{ github.event.release.prerelease }}
         token: ${{ secrets.GITHUB_TOKEN }}
-        artifacts: './materialserver-win32-x64.zip'
+        artifacts: './materialserver-macos-x64.zip'
         tag: ${{ github.event.release.tag_name }}
         body: ${{ github.event.release.body }}
 
-  build_on_mac:
+  build_on_mac_arm64:
     runs-on: macOS-latest
     steps:
     # checkout branch
@@ -66,11 +73,28 @@ jobs:
     - name: Build app for arm
       run: npm run make -- --arch=arm64 --platform=darwin 
 
-    - name: Build app for intel
-      run: npm run make -- --platform darwin
-
     - name: See directory
       run: ls ./out
 
     - name: See directory
-      run: ls ./out/materialserver-darwin-x64
+      run: ls ./out/materialserver-darwin-arm64
+
+    - name: Compress release
+      run: zip ./materialserver-macos-arm64.zip out/materialserver-darwin-arm64/materialserver.app
+
+    - name: See directory
+      run: ls
+
+    # Create a release for this specific version
+    - name: Update Release with Files
+      id: create_version_release
+      uses: ncipollo/release-action@v1
+      with:
+        allowUpdates: true # Set this to false if you want to prevent updating existing releases
+        name: ${{ github.event.release.name }}
+        draft: ${{ github.event.release.unpublished }}
+        prerelease: ${{ github.event.release.prerelease }}
+        token: ${{ secrets.GITHUB_TOKEN }}
+        artifacts: './materialserver-macos-arm64.zip'
+        tag: ${{ github.event.release.tag_name }}
+        body: ${{ github.event.release.body }}
