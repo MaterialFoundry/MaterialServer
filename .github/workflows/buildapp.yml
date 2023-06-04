@@ -25,7 +25,7 @@ jobs:
       run: npm install
 
     - name: Build app for intel
-      run: npm run make -- --platform darwin
+      run: npm run make
 
     - name: See directory
       run: ls ./out
@@ -35,6 +35,9 @@ jobs:
     
     - name: Change directory
       run: cd ./out/materialserver-darwin-x64
+
+    - name: See directory
+      run: ls -hl
 
     - name: Compress release
       run: zip materialserver-macos-x64.zip materialserver.app
