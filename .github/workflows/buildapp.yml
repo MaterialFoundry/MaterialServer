@@ -31,13 +31,16 @@ jobs:
       run: ls ./out
 
     - name: See directory
-      run: ls ./out/materialserver-darwin-x64
+      run: ls -hl ./out/materialserver-darwin-x64
+    
+    - name: Change directory
+      run: cd ./out/materialserver-darwin-x64
 
     - name: Compress release
-      run: zip ./materialserver-macos-x64.zip out/materialserver-darwin-x64/materialserver.app
+      run: zip materialserver-macos-x64.zip materialserver.app
 
     - name: See directory
-      run: ls
+      run: ls -hl
 
     # Create a release for this specific version
     - name: Update Release with Files
@@ -49,7 +52,7 @@ jobs:
         draft: ${{ github.event.release.unpublished }}
         prerelease: ${{ github.event.release.prerelease }}
         token: ${{ secrets.GITHUB_TOKEN }}
-        artifacts: './out/materialserver-darwin-x64/materialserver.app'
+        artifacts: 'materialserver-macos-x64.zip'
         tag: ${{ github.event.release.tag_name }}
         body: ${{ github.event.release.body }}
 
