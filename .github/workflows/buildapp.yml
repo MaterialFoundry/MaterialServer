@@ -6,9 +6,7 @@ on:
     types: [published]
       
 jobs:
-  
-
-build_on_win:
+  build_on_win:
     runs-on: windows-latest
     steps:
     # checkout branch
