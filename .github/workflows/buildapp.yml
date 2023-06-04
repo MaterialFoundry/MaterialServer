@@ -63,11 +63,14 @@ jobs:
     - name: Install dependencies
       run: npm install
 
-    - name: Build app
-      run: npm run make
+    - name: Build app for arm
+      run: npm run make -- --platform arm64
 
-    - name: See directory
-      run: ls
+    - name: Build app for intel
+      run: npm run make -- --platform darwin
 
     - name: See directory
       run: ls ./out
+
+    - name: See directory
+      run: ls ./out/materialserver-darwin-x64
